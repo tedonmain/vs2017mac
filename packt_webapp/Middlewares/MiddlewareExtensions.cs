@@ -19,9 +19,20 @@ namespace packt_webapp.Middlewares
 
         public static async void AddSeedData(this IApplicationBuilder app)
         {
-            var seedDataService = app.ApplicationServices.GetRequiredService<ISeedDataService>();
+            using (var seedDataContext = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                var seedDataService = seedDataContext.ServiceProvider.GetRequiredService<ISeedDataService>();
+                await seedDataService.EnsureSeedData();
+            }
 
-            await seedDataService.EnsureSeedData();
+            //2.0
+            //var seedDavar seedDataContext = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            //var seedDataContext = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            //await seedDataService.EnsureSeedData();
+
+            //1.1
+            //var seedDataService = app.ApplicationServices.GetRequiredService<ISeedDataService>();
+            //await seedDataService.EnsureSeedData();
         }
     }
 }

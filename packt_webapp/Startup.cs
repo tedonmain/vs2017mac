@@ -89,9 +89,8 @@ namespace packt_webapp
 
             //app.UseMiddleware<CustomMiddleware>();
             //app.UseCustomMiddleware();
-
-            // 
-            //app.AddSeedData();
+             
+            app.AddSeedData();
 
             app.UseMvc();
         }
