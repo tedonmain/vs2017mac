@@ -288,4 +288,6 @@ __pycache__/
 *.xsd.cs
 
 *.DS_store
+*.nlog.txt
+*.log
 
