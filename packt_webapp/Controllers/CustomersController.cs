@@ -61,13 +61,15 @@ namespace packt_webapp.Controllers
 
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            Console.WriteLine(ModelState);
-
             Customer toAdd = Mapper.Map<Customer>(customerCreateDto);
+
             _customerRepository.Add(toAdd);
+
             bool result = _customerRepository.Save();
+
             if (!result) throw new Exception("(POST):something went wrong when adding a new customer");
             //return Ok(Mapper.Map<CustomerDto>(toAdd));
+
             return CreatedAtRoute("GetSingleCustomer", new { id = toAdd.Id }, Mapper.Map<CustomerDto>(toAdd));
         }
 
@@ -76,15 +78,22 @@ namespace packt_webapp.Controllers
         [Route("{id}")]
         public IActionResult UpdateCustomer(Guid id, [FromBody] CustomerUpdateDto updateDto)
         {
+            if (updateDto == null) return BadRequest();
+
             var existingCustomer = _customerRepository.GetSingle(id);
-            if (existingCustomer == null)
-            {
-                return NotFound();
-            }
+
+            if (existingCustomer == null) return NotFound();
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             Mapper.Map(updateDto, existingCustomer);
+
             _customerRepository.Update(existingCustomer);
+
             bool result = _customerRepository.Save();
+
             if (!result) throw new Exception($"(PUT):something went wrong when updating the customer with id: {id}");
+
 			return Ok(Mapper.Map<CustomerDto>(existingCustomer));
         }
 
@@ -93,14 +102,25 @@ namespace packt_webapp.Controllers
         public IActionResult PartiallyUpdate(Guid id, [FromBody] JsonPatchDocument<CustomerUpdateDto> customerPatchDoc)
         {
             if (customerPatchDoc == null) return BadRequest();
+
             var existingCustomer = _customerRepository.GetSingle(id);
             if (existingCustomer == null) return NotFound();
+
             var customerToPatch = Mapper.Map<CustomerUpdateDto>(existingCustomer);
-            customerPatchDoc.ApplyTo(customerToPatch);
+            customerPatchDoc.ApplyTo(customerToPatch, ModelState);
+
+            TryValidateModel(customerToPatch);
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             Mapper.Map(customerToPatch, existingCustomer);
+
             _customerRepository.Update(existingCustomer);
+
             bool result = _customerRepository.Save();
+
             if (!result) throw new Exception($"(PATCH):something went wrong when updating the customer with id: {id}");
+
             return Ok(Mapper.Map<CustomerDto>(existingCustomer));
         }
 

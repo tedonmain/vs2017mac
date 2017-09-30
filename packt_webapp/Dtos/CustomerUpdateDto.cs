@@ -8,11 +8,14 @@ namespace packt_webapp.Dtos
 {
 	public class CustomerUpdateDto
 	{
-
+        [Required]
 		public string Firstname { get; set; }
 
+        [Required]
 		public string Lastname { get; set; }
 
+        [Required]
+        [Range(0,100)]
 		public int Age { get; set; }
 	}
 }

@@ -15,7 +15,7 @@ namespace packt_webapp.Dtos
 		public string Lastname { get; set; }
 
         [Required]
-        [Range(1,100)]
+        [Range(0,100)]
 		public int Age { get; set; }
 	}
 }
