@@ -57,6 +57,12 @@ namespace packt_webapp.Controllers
         [HttpPost]
         public IActionResult AddCustomer([FromBody]CustomerCreateDto customerCreateDto)
         {
+            if (customerCreateDto == null) return BadRequest("customer create object was null");
+
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            Console.WriteLine(ModelState);
+
             Customer toAdd = Mapper.Map<Customer>(customerCreateDto);
             _customerRepository.Add(toAdd);
             bool result = _customerRepository.Save();
@@ -100,7 +106,8 @@ namespace packt_webapp.Controllers
 
         [HttpDelete]
         [Route("{id}")]
-        public IActionResult Remove(Guid id) {
+        public IActionResult Remove(Guid id) 
+        {
             var existingCustomer = _customerRepository.GetSingle(id);
             if (existingCustomer == null) return NotFound();
             _customerRepository.Delete(id);
