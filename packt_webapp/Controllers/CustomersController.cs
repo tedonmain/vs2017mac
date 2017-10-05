@@ -28,6 +28,7 @@ namespace packt_webapp.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(void), 200)]
         public IActionResult GetAllCustomers()
         {
             //throw new Exception("  ----> Test Exception");
@@ -55,8 +56,11 @@ namespace packt_webapp.Controllers
 
         // POST api/customers - adding a new customer
         [HttpPost]
+        [ProducesResponseType(typeof(void), 201)]
+        [ProducesResponseType(typeof(void), 400)]
         public IActionResult AddCustomer([FromBody]CustomerCreateDto customerCreateDto)
         {
+            
             if (customerCreateDto == null) return BadRequest("customer create object was null");
 
             if (!ModelState.IsValid) return BadRequest(ModelState);

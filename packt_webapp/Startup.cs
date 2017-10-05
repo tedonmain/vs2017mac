@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using packt_webapp.Middlewares;
-using System.IO;
-using System.Diagnostics;
-using Microsoft.SqlServer.Server;
-using Microsoft.SqlServer;
-using Microsoft.Data;
 using Microsoft.EntityFrameworkCore;
 using packt_webapp.Entities;
 using packt_webapp.Repositories;
@@ -23,6 +14,10 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using NLog.Web;
 using NLog.Extensions.Logging;
 using Microsoft.AspNetCore.Diagnostics;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
+//using Microsoft.AspNetCore.Mvc.Versioning;
+//using IdentityServer4.AccessTokenValidation;
 
 namespace packt_webapp
 {
@@ -67,6 +62,10 @@ namespace packt_webapp
             services.AddScoped<ICustomerRepository, CustomerRepository>();
 
             services.AddScoped<ISeedDataService, SeedDataService>();
+
+            services.AddSwaggerGen( config=> {
+                config.SwaggerDoc("v1", new Info { Title = "My WebAPI", Version = "v1"});
+            });
 
             services.AddMvc(config =>
             {
@@ -124,6 +123,12 @@ namespace packt_webapp
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+
+			app.UseSwagger();
+			app.UseSwaggerUI(config =>
+			{
+				config.SwaggerEndpoint("/swagger/v1/swagger.json", "My WebAPI");
+			});
 
 
             AutoMapper.Mapper.Initialize(mapper =>
