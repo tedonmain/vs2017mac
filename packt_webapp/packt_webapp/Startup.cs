@@ -16,8 +16,6 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Diagnostics;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
-//using Microsoft.AspNetCore.Mvc.Versioning;
-//using IdentityServer4.AccessTokenValidation;
 
 namespace packt_webapp
 {
@@ -25,8 +23,6 @@ namespace packt_webapp
 	//    public string Firstname { get; set; }
 	//    public string Lastname { get; set; }
 	//}
-
-
 
 	public class Startup
 	{
