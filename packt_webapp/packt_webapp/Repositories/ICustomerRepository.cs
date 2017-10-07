@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
 using packt_webapp.Entities;
+using packt_webapp.Controllers;
+using packt_webapp.QueryParameters;
 
 namespace packt_webapp.Repositories
 {
@@ -8,9 +10,10 @@ namespace packt_webapp.Repositories
 	{
 		void Add(Customer item);
 		void Delete(Guid id);
-		IQueryable<Customer> GetAll();
+		IQueryable<Customer> GetAll(CustomerQueryParameters customerQueryParameters);
 		Customer GetSingle(Guid id);
 		bool Save();
-		void Update(Customer item);
-	}
+        int Count();
+        void Update(Customer item);
+    }
 }

@@ -1,14 +1,16 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.AspNetCore.Mvc;
-using packt_webapp.Dtos;
-using packt_webapp.Entities;
-using packt_webapp.Repositories;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using packt_webapp.Dtos;
+using packt_webapp.Entities;
+using packt_webapp.QueryParameters;
+using packt_webapp.Repositories;
 
 namespace packt_webapp.Controllers
 {
@@ -29,15 +31,20 @@ namespace packt_webapp.Controllers
 
         [HttpGet]
         [ProducesResponseType(typeof(void), 200)]
-        public IActionResult GetAllCustomers()
-        {
+        //public IActionResult GetAllCustomers() // CustomerQueryParameters customerQueryParameters
+        public IActionResult GetAllCustomers(CustomerQueryParameters customerQueryParameters) // CustomerQueryParameters customerQueryParameters
+		{
             //throw new Exception("  ----> Test Exception");
 
             _logger.LogInformation(" -------> GetAllCustomers()...");
 
-            var allCustomers = _customerRepository.GetAll().ToList();
+            //var allCustomers = _customerRepository.GetAll().ToList();
+            var allCustomers = _customerRepository.GetAll(customerQueryParameters);
+
 
             var allCustomersDto = allCustomers.Select(x => Mapper.Map<CustomerDto>(x));
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(new { totalCount = _customerRepository.Count()}));
 
             return Ok(allCustomersDto);
         }

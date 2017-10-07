@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Diagnostics;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using NLog.Web;
+using NLog.Extensions.Logging;
 
 namespace packt_webapp
 {
@@ -35,7 +37,7 @@ namespace packt_webapp
 				.SetBasePath(env.ContentRootPath)
 				.AddJsonFile("appsettings.json")
 				.AddEnvironmentVariables();
-			//env.ConfigureNLog("nlog.config");
+			env.ConfigureNLog("nlog.config");
 
 			Configuration = builder.Build();
 
@@ -76,11 +78,10 @@ namespace packt_webapp
 		{
 			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 			loggerFactory.AddDebug(LogLevel.Error);
-
-			//nlog
-			//loggerFactory.AddNLog();
+            //nlog
+			loggerFactory.AddNLog();
 			// add NLog Web
-			//app.AddNLogWeb();
+			app.AddNLogWeb();
 
 			if (env.IsDevelopment())
 			{
@@ -109,6 +110,7 @@ namespace packt_webapp
 			if (env.IsEnvironment("MyEnvironment"))
 			{
 				app.UseCustomMiddleware();
+                app.AddSeedData();
 			}
 
 			// use index.html instead
@@ -137,8 +139,7 @@ namespace packt_webapp
 
 			//app.UseMiddleware<CustomMiddleware>();
 			//app.UseCustomMiddleware();
-
-			app.AddSeedData();
+            //app.AddSeedData();
 
 			app.UseMvc();
 		}
