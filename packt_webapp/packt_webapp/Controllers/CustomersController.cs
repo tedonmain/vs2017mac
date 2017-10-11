@@ -30,7 +30,7 @@ namespace packt_webapp.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(List<Customer>), 200)] //[ProducesResponseType(typeof(void), 200)]
         //public IActionResult GetAllCustomers() // CustomerQueryParameters customerQueryParameters
         public IActionResult GetAllCustomers(CustomerQueryParameters customerQueryParameters) // CustomerQueryParameters customerQueryParameters
 		{
