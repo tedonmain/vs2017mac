@@ -14,6 +14,8 @@ using packt_webapp.Repositories;
 
 namespace packt_webapp.Controllers
 {
+    //[ApiVersion("1.0", Deprecated = true)] 
+    //[Route("api/v{version:apiVersion}/customers")]
     [Route("api/[controller]")]
     public class CustomersController : Controller
     {

@@ -18,6 +18,10 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 using NLog.Web;
 using NLog.Extensions.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using packt_webapp.Controllers;
+using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 
 namespace packt_webapp
 {
@@ -46,32 +50,42 @@ namespace packt_webapp
 
 		}
 
-		// This method gets called by the runtime. Use this method to add services to the container.
-		// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-		public void ConfigureServices(IServiceCollection services)
-		{
-			services.AddOptions();
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddOptions();
 
-			//services.Configure<MyConfiguration>(Configuration);
+            //services.Configure<MyConfiguration>(Configuration);
 
-			//services.AddDbContext<PacktDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-			services.AddDbContextPool<PacktDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            //services.AddDbContext<PacktDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContextPool<PacktDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-			services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
 
-			services.AddScoped<ISeedDataService, SeedDataService>();
+            services.AddScoped<ISeedDataService, SeedDataService>();
 
-	        services.AddSwaggerGen(config => {
-				config.SwaggerDoc("v1", new Info { Title = "My WebAPI", Version = "v1" });
-			});
+            //services.AddMvc();
+            services.AddMvc(config =>
+            {
+                config.ReturnHttpNotAcceptable = true;
+                config.OutputFormatters.Add(new XmlSerializerOutputFormatter());
+                config.InputFormatters.Add(new XmlSerializerInputFormatter());
+            });
 
-			services.AddMvc(config =>
-			{
-				config.ReturnHttpNotAcceptable = true;
-				config.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-				config.InputFormatters.Add(new XmlSerializerInputFormatter());
-			});
-		}
+            //services.AddApiVersioning();
+            services.AddApiVersioning(config =>
+            {
+                config.ReportApiVersions = true;
+                config.AssumeDefaultVersionWhenUnspecified = true;
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                config.ApiVersionReader = new HeaderApiVersionReader("api-version");
+            });
+
+            services.AddSwaggerGen(config => {
+                config.SwaggerDoc("v1", new Info { Title = "My WebAPI", Version = "v1" });
+            });
+        }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
