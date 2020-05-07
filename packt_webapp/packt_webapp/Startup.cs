@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using packt_webapp.Middlewares;
-using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore;
 using packt_webapp.Entities;
 using packt_webapp.Repositories;
 using packt_webapp.Dtos;
@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using packt_webapp.Controllers;
 using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 namespace packt_webapp
 {
@@ -34,14 +36,20 @@ namespace packt_webapp
 	{
 		public IConfigurationRoot Configuration { get; }
 
-		public Startup(IHostingEnvironment env)
+		public Startup(IWebHostEnvironment env)
 		{
 			var builder = new ConfigurationBuilder()
 				//.SetBasePath(Directory.GetCurrentDirectory())
 				.SetBasePath(env.ContentRootPath)
 				.AddJsonFile("appsettings.json")
 				.AddEnvironmentVariables();
-			env.ConfigureNLog("nlog.config");
+                ;
+
+
+            //env.ConfigureNLog("nlog.config");
+
+           
+           
 
 			Configuration = builder.Build();
 
@@ -70,7 +78,7 @@ namespace packt_webapp
             {
                 config.ReturnHttpNotAcceptable = true;
                 config.OutputFormatters.Add(new XmlSerializerOutputFormatter());
-                config.InputFormatters.Add(new XmlSerializerInputFormatter());
+                //config.InputFormatters.Add(new XmlSerializerInputFormatter());
             });
 
             //services.AddApiVersioning();
@@ -83,19 +91,20 @@ namespace packt_webapp
             });
 
             services.AddSwaggerGen(config => {
-                config.SwaggerDoc("v1", new Info { Title = "My WebAPI", Version = "v1" });
+                config.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "My WebAPI", Version = "v1" });
             });
         }
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
 		{
-			loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-			loggerFactory.AddDebug(LogLevel.Error);
-            //nlog
-			loggerFactory.AddNLog();
-			// add NLog Web
-			app.AddNLogWeb();
+			//loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+   //         loggerFactory.AddNLog
+			//loggerFactory.AddDebug(LogLevel.Error);
+   //         //nlog
+			//loggerFactory.AddNLog();
+			//// add NLog Web
+			//app.AddNLogWeb();
 
 			if (env.IsDevelopment())
 			{
@@ -155,7 +164,7 @@ namespace packt_webapp
 			//app.UseCustomMiddleware();
             //app.AddSeedData();
 
-			app.UseMvc();
+			app.UseRouting();
 		}
 	}
 }
